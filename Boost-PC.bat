@@ -40,8 +40,8 @@ goto :eof
 title Checking working tasks... (D-Scripts)
 color A
 tasklist
-echo Waiting for 3 seconds...
-timeout /t 3 >nul
+echo Waiting for 2 seconds...
+timeout /t 2 >nul
 cls
 goto :eof
 
@@ -62,7 +62,12 @@ goto :eof
 title Terminating unwanted processes and tasks... (D-Scripts)
 tasklist | find /i "%1" > nul
 if not errorlevel 1 taskkill /f /im "%1"
-timeout /t 1 >nul
+taskkill /IM chrome.exe /F
+taskkill /IM msedge.exe /F
+taskkill /IM SecurityHealthService.exe /F
+taskkill /IM opera.exe /F
+taskkill /IM spotify.exe /F
+taskkill /IM discord.exe /F
 goto :eof
 
 :wait_and_clear_temp
@@ -90,10 +95,24 @@ if errorlevel 2 (
     del /q /s /f "%UserProfile%\AppData\Local\Microsoft\Windows\Temporary Internet Files\*.*"
     echo Deleting temp files for all users...
     rd /s /q %SystemRoot%\Temp
+    del /q /s /f "C:\Windows\SystemTemp\*.*"
+    del /q /s /f "C:\ProgramData\Microsoft\Windows\WER\*.*"
+    del /q /s /f "C:\Users\RRPS\AppData\Local\Temp\*.*"
     echo .
     echo Temporary Files have been Deleted Successfully.
     timeout /t 1 >nul
 )
+echo Do you want to run Disk CheckUp?(May take upto 5 minutes) (Y/N)
+set /p choice=Choose [Y/N]: 
+
+if /i "%choice%"=="Y" (
+    echo Running chkdsk /f...
+    chkdsk /f
+    echo Check Disk is complete. Please restart your computer if prompted.
+) else (
+    echo Check Disk was not run.
+)
+timeout /t 1 >nul
 
 echo .
 echo All Temporary and unwanted files has been deleted!
